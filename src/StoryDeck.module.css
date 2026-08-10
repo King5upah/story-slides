@@ -181,3 +181,46 @@
   border-top: 1px solid #ede3cc;
   color: #3d2b1f;
 }
+
+.continueHint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+}
+
+.fillInput {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  padding: 4px 0 8px;
+  outline: none;
+}
+
+.statValue {
+  font-size: 40px;
+  font-weight: 800;
+  color: white;
+  text-align: center;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.resultRoot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 40px 0;
+  text-align: center;
+}

@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { StoryDeck, type StorySlide } from "story-slides";
+import { StoryDeck, CardDeck, type StorySlide, type BarajaCard } from "story-slides";
 
 const slides: StorySlide[] = [
   {
@@ -58,15 +58,42 @@ const slides: StorySlide[] = [
   },
 ];
 
+const cards: BarajaCard[] = [
+  { prompt: "CardDeck", widget: { type: "flipCard", front: "ciao", back: "hola\n\n\"Ciao! Come stai?\"" } },
+  {
+    widget: {
+      type: "singleChoiceQuiz",
+      question: "¿Cómo se dice \"gracias\" en italiano?",
+      options: ["Ciao", "Grazie", "Acqua", "Prego"],
+      correctIndex: 1,
+      explanation: "\"Grazie\" significa gracias.",
+    },
+  },
+  { widget: { type: "trueFalse", statement: "\"Acqua\" significa agua.", isTrue: true } },
+];
+
+const useCardDeck = new URLSearchParams(location.search).has("cards");
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <StoryDeck
-      slides={slides}
-      title="story-slides"
-      icon="📱"
-      accentColor="#7d2033"
-      onExit={() => alert("onExit fired")}
-      onComplete={() => alert("onComplete fired 🎉")}
-    />
+    {useCardDeck ? (
+      <CardDeck
+        cards={cards}
+        title="CardDeck demo"
+        icon="🃏"
+        accentColor="#2d6a4f"
+        onExit={() => alert("onExit fired")}
+        onFinish={(result) => alert(`onFinish: ${result.correct}/${result.graded} correctas`)}
+      />
+    ) : (
+      <StoryDeck
+        slides={slides}
+        title="story-slides"
+        icon="📱"
+        accentColor="#7d2033"
+        onExit={() => alert("onExit fired")}
+        onComplete={() => alert("onComplete fired 🎉")}
+      />
+    )}
   </StrictMode>
 );

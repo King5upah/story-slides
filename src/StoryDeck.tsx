@@ -2,6 +2,10 @@ import { useState } from "react";
 import type { StorySlide, StoryDeckProps } from "./types";
 import styles from "./StoryDeck.module.css";
 
+// A quiz slide follows the same convention as every other tap-to-advance
+// slide: selecting an option locks the answer immediately (no "Comprobar"
+// button) and the deck's own tap zones — not an in-slide button — advance
+// to the next slide once it's answered.
 function QuizSlide({
   slide,
   onAnswered,
@@ -10,8 +14,14 @@ function QuizSlide({
   onAnswered: () => void;
 }) {
   const [selected, setSelected] = useState<number | null>(null);
-  const [checked, setChecked] = useState(false);
+  const checked = selected !== null;
   const isCorrect = selected === slide.correct;
+
+  function select(i: number) {
+    if (checked) return;
+    setSelected(i);
+    onAnswered();
+  }
 
   return (
     <div className={`${styles.slideFull} ${styles.autoPointer}`}>
@@ -33,14 +43,12 @@ function QuizSlide({
               border = "#7d2033";
               color = "#7d2033";
             }
-          } else if (i === selected) {
-            border = "white";
           }
           return (
             <button
               key={i}
               disabled={checked}
-              onClick={() => setSelected(i)}
+              onClick={() => select(i)}
               className={styles.optionButton}
               style={{ background: bg, border: `2px solid ${border}`, color }}
             >
@@ -49,25 +57,16 @@ function QuizSlide({
           );
         })}
       </div>
-      {checked ? (
-        <div style={{ borderRadius: 12, padding: 16, background: isCorrect ? "#e8f5ee" : "#fde8ec" }}>
-          <p style={{ fontWeight: 700, marginBottom: 4, color: isCorrect ? "#2d6a4f" : "#7d2033", fontSize: 14 }}>
-            {isCorrect ? "✓" : "✗"}
-          </p>
-          <p style={{ fontSize: 14, color: "#3d2b1f" }}>{slide.explanation}</p>
-          <button onClick={onAnswered} className={styles.checkButton} style={{ background: "#1c2b4b", marginTop: 12, fontSize: 14 }}>
-            Toca para continuar →
-          </button>
-        </div>
-      ) : (
-        <button
-          disabled={selected === null}
-          onClick={() => setChecked(true)}
-          className={styles.checkButton}
-          style={{ background: "#1c2b4b", opacity: selected === null ? 0.4 : 1 }}
-        >
-          Comprobar
-        </button>
+      {checked && (
+        <>
+          <div style={{ borderRadius: 12, padding: 16, background: isCorrect ? "#e8f5ee" : "#fde8ec" }}>
+            <p style={{ fontWeight: 700, marginBottom: 4, color: isCorrect ? "#2d6a4f" : "#7d2033", fontSize: 14 }}>
+              {isCorrect ? "✓" : "✗"}
+            </p>
+            <p style={{ fontSize: 14, color: "#3d2b1f" }}>{slide.explanation}</p>
+          </div>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center" }}>Toca para continuar</p>
+        </>
       )}
     </div>
   );

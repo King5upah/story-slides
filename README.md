@@ -1,6 +1,6 @@
 # story-slides
 
-Tap-to-advance story slides for structured content — an Instagram-Stories-like UX for React, with embedded quizzes and no autoplay timers.
+Tap-to-advance story slides for structured content — an Instagram-Stories-like UX for React, with embedded quizzes and no autoplay timers. Also ships `CardDeck`, a sibling component for graded flashcard/quiz decks that follows the exact same tap-to-advance convention, and `ShareableDeck` helpers to export/import decks as portable JSON.
 
 It grew out of a French-grammar lesson turned into a swipeable deck: instead of one long scrolling page, each idea gets its own slide, the reader controls the pace by tapping left/right, and a quiz slide can block progress until answered.
 
@@ -56,6 +56,60 @@ No Tailwind, no CSS framework required — styles ship as a scoped CSS module.
 | `tip`       | a callout                             |
 | `quiz`      | interactive check, blocks advancing   |
 | `cta`       | closing card with a button            |
+
+## CardDeck — graded flashcard/quiz decks
+
+`StoryDeck` is for content you read. `CardDeck` is its sibling for content
+you're *tested on* — flashcards, quizzes, true/false, fill-in-the-blank —
+but it follows the exact same convention: full-bleed centered cards, tap
+left/right to go back or advance, no "Continuar" buttons. The only tappable
+elements are the actual choices (an option, a text field); everything else
+— including flipping a card or acknowledging a stat — advances through the
+same shared tap zones a story does.
+
+```tsx
+import { CardDeck, type BarajaCard } from "story-slides";
+
+const cards: BarajaCard[] = [
+  { prompt: "Italiano", widget: { type: "flipCard", front: "ciao", back: "hola" } },
+  {
+    widget: {
+      type: "singleChoiceQuiz",
+      question: "¿Cómo se dice \"gracias\" en italiano?",
+      options: ["Ciao", "Grazie", "Acqua", "Prego"],
+      correctIndex: 1,
+      explanation: "\"Grazie\" significa gracias.",
+    },
+  },
+];
+
+<CardDeck
+  cards={cards}
+  title="Vocabulario A1"
+  icon="🃏"
+  accentColor="#2d6a4f"
+  onExit={() => console.log("closed")}
+  onFinish={(result) => console.log(`${result.correct}/${result.graded} correct`)}
+/>;
+```
+
+Widget types: `singleChoiceQuiz`, `multiChoiceQuiz`, `trueFalse`,
+`fillInBlank`, `flipCard`, `counter`, `rating`.
+
+## Sharing a deck (ShareableDeck)
+
+Any `BarajaCard[]` deck can be exported to a portable `.json` file and read
+back — by this app, another app, or the Swift SDK
+([story-slides-swift](https://github.com/King5upah/story-slides-swift)),
+since both use the same JSON shape.
+
+```tsx
+import { downloadShareableDeck, fromShareableJSON } from "story-slides";
+
+downloadShareableDeck({ name: "Vocabulario A1", cards });
+
+const deck = fromShareableJSON(jsonText); // { name, cards }
+```
 
 ## Demo
 
