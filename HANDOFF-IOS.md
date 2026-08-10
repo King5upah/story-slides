@@ -1,5 +1,7 @@
 # Handoff: DeckManifest + URL sharing → story-slides-swift
 
+> **Status: done.** `story-slides-swift` shipped `DeckManifest`, `serializeDeck`/`deserializeDeck`, and `encodeDeckToParam`/`decodeDeckFromParam`/`buildShareURL`/`readDeckFromLocation` (see `Sources/StorySlides/Slide/DeckManifest.swift` and `DeckSharing.swift`), matching this spec. Kept below for historical context / as the spec the Swift implementation was checked against.
+
 The web SDK (`story-slides-protocol`, this repo, `packages/protocol/`) just merged a second sharing protocol that **story-slides-swift does not have yet**. Everything else (StorySlide, CardWidget, ShareableDeck) is already at parity — this doc covers only the gap.
 
 ## What's missing on the Swift side
