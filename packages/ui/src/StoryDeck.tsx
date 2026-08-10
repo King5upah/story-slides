@@ -1,17 +1,20 @@
 import { useState } from "react";
-import type { StorySlide, StoryDeckProps } from "./types";
+import type { StorySlide, StoryDeckProps, CTAAction } from "./types";
 import styles from "./StoryDeck.module.css";
 
 // A quiz slide follows the same convention as every other tap-to-advance
 // slide: selecting an option locks the answer immediately (no "Comprobar"
 // button) and the deck's own tap zones — not an in-slide button — advance
-// to the next slide once it's answered.
+// to the next slide once it's answered. If the slide carries an `action`,
+// answering also fires it (same moment `onAnswered` already fires).
 function QuizSlide({
   slide,
   onAnswered,
+  onAction,
 }: {
   slide: Extract<StorySlide, { type: "quiz" }>;
   onAnswered: () => void;
+  onAction?: (action: CTAAction) => void;
 }) {
   const [selected, setSelected] = useState<number | null>(null);
   const checked = selected !== null;
@@ -21,6 +24,7 @@ function QuizSlide({
     if (checked) return;
     setSelected(i);
     onAnswered();
+    if (slide.action) onAction?.(slide.action);
   }
 
   return (
@@ -77,11 +81,13 @@ function SlideView({
   accentColor,
   onQuizAnswered,
   onComplete,
+  onAction,
 }: {
   slide: StorySlide;
   accentColor: string;
   onQuizAnswered: () => void;
   onComplete?: () => void;
+  onAction?: (action: CTAAction) => void;
 }) {
   switch (slide.type) {
     case "title":
@@ -169,14 +175,21 @@ function SlideView({
       );
 
     case "quiz":
-      return <QuizSlide slide={slide} onAnswered={onQuizAnswered} />;
+      return <QuizSlide slide={slide} onAnswered={onQuizAnswered} onAction={onAction} />;
 
     case "cta":
       return (
         <div className={`${styles.slideCentered} ${styles.autoPointer}`}>
           <h2 style={{ fontSize: 24, fontWeight: 700, color: "white", margin: 0 }}>{slide.heading}</h2>
           <p style={{ fontSize: 15, color: "rgba(255,255,255,0.75)" }}>{slide.body}</p>
-          <button onClick={onComplete} className={styles.ctaButton} style={{ background: accentColor }}>
+          <button
+            onClick={() => {
+              if (slide.action) onAction?.(slide.action);
+              onComplete?.();
+            }}
+            className={styles.ctaButton}
+            style={{ background: accentColor }}
+          >
             {slide.label}
           </button>
         </div>
@@ -243,7 +256,13 @@ export function StoryDeck(props: StoryDeckProps) {
         </div>
 
         <div className={styles.content}>
-          <SlideView slide={current} accentColor={accentColor} onQuizAnswered={() => setQuizLocked(false)} onComplete={onComplete} />
+          <SlideView
+            slide={current}
+            accentColor={accentColor}
+            onQuizAnswered={() => setQuizLocked(false)}
+            onComplete={onComplete}
+            onAction={(action) => props.onAction?.(action, { index, slide: current })}
+          />
         </div>
 
         {current.type !== "cta" && (

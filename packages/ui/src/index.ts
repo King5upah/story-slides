@@ -7,6 +7,7 @@ export type {
   BarajaCard,
   DeckResult,
   CardDeckProps,
+  CTAAction,
 } from "./types";
 export type { CardWidget, TapBehavior } from "story-slides-protocol";
 export { tapBehaviorFor, isGraded } from "story-slides-protocol";

@@ -265,7 +265,7 @@ function DeckResultView({
 /// as `StoryDeck`: tap left/right to go back or advance. Graded widgets
 /// answer through their own controls; everything else — including
 /// revealing a flip card's back — advances through the shared tap zones.
-export function CardDeck({ cards, accentColor = "#7d2033", title, icon, onExit, onFinish }: CardDeckProps) {
+export function CardDeck({ cards, accentColor = "#7d2033", title, icon, onExit, onFinish, onAction }: CardDeckProps) {
   const [index, setIndex] = useState(0);
   const [resolved, setResolved] = useState(false);
   const [correct, setCorrect] = useState(0);
@@ -281,6 +281,7 @@ export function CardDeck({ cards, accentColor = "#7d2033", title, icon, onExit, 
       setGraded((g) => g + 1);
       if (isCorrect) setCorrect((c) => c + 1);
     }
+    if (current?.widget.action) onAction?.(current.widget.action, { index, card: current });
   }
 
   function advance() {
@@ -310,6 +311,7 @@ export function CardDeck({ cards, accentColor = "#7d2033", title, icon, onExit, 
       advance();
     } else if (behavior === "revealThenAdvance") {
       setResolved(true);
+      if (current.widget.action) onAction?.(current.widget.action, { index, card: current });
     }
     // "requiresInteraction": no-op, the widget's own controls call resolve()
   }

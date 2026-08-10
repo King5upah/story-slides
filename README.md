@@ -145,6 +145,36 @@ const restored = fromShareableJSON(jsonString); // { name, cards }
 
 The demo wires up both: the default view is a `StoryDeck` with a "Share this deck" link button; add `?cards` to the URL to see the `CardDeck` demo with a "Download deck" button.
 
+## Actionable CTAs
+
+Any slide/widget can carry an optional `action: CTAAction` — a `url`, a `deeplink`, or an app-defined `actionId`. The SDK never opens or navigates anywhere on its own; every kind funnels through the same `onAction` callback, so the host app decides what actually happens:
+
+```ts
+export type CTAAction =
+  | { kind: "url"; url: string }
+  | { kind: "deeplink"; url: string }
+  | { kind: "actionId"; id: string; payload?: Record<string, string> };
+```
+
+```tsx
+<StoryDeck
+  deck={deck}
+  onAction={(action) => {
+    switch (action.kind) {
+      case "url":
+      case "deeplink":
+        window.open(action.url, "_blank");
+        break;
+      case "actionId":
+        handleAppAction(action.id, action.payload);
+        break;
+    }
+  }}
+/>
+```
+
+It fires at the same moment each slide/widget already resolves — a `cta` button tap, a quiz being answered, a flip card being revealed — no separate tap-handling mechanism. Same shape and same `onAction` model on `CardDeck`, and on the [Swift SDK](https://github.com/King5upah/story-slides-swift)'s `StoryDeckView`/`CardDeckView`.
+
 ## Demo
 
 ```bash
