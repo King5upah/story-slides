@@ -1,7 +1,7 @@
 {
   "name": "story-slides-protocol",
-  "version": "0.1.0",
-  "description": "Portable, versioned format for story-slides decks — serialize, validate, and share via URL. No React, no backend required.",
+  "version": "0.2.0",
+  "description": "Portable formats for story-slides decks: a versioned DeckManifest (serialize/validate/share via URL) plus ShareableDeck (file-based JSON, compatible with the Swift SDK). No React, no backend required.",
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",

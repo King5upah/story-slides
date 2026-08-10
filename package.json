@@ -1,8 +1,8 @@
 {
   "name": "story-slides-monorepo",
   "private": true,
-  "version": "0.1.0",
-  "description": "Tap-to-advance story slides for structured content — Instagram-Stories-like UX for React, with embedded quizzes and a shareable deck protocol.",
+  "version": "0.2.0",
+  "description": "Tap-to-advance story slides (StoryDeck) and graded flashcard/quiz decks (CardDeck) for React, with a shareable deck protocol (URL-based DeckManifest + file-based ShareableDeck compatible with the Swift SDK).",
   "license": "MIT",
   "workspaces": ["packages/*", "demo"],
   "scripts": {

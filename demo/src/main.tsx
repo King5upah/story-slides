@@ -1,7 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { StoryDeck } from "story-slides-ui";
-import { buildShareURL, readDeckFromLocation, type DeckManifest } from "story-slides-protocol";
+import { StoryDeck, CardDeck } from "story-slides-ui";
+import {
+  buildShareURL,
+  readDeckFromLocation,
+  downloadShareableDeck,
+  type DeckManifest,
+  type BarajaCard,
+} from "story-slides-protocol";
 
 const exampleDeck: DeckManifest = {
   version: 1,
@@ -48,7 +54,7 @@ const exampleDeck: DeckManifest = {
     },
     {
       type: "tip",
-      body: "Quiz slides block advancing until the reader answers — a light commitment device.",
+      body: "Quiz slides lock the tap-to-advance until the reader picks an answer — a light commitment device.",
     },
     {
       type: "quiz",
@@ -60,11 +66,28 @@ const exampleDeck: DeckManifest = {
     {
       type: "cta",
       heading: "That's it!",
-      body: "Swap these slides for your own content — grammar lessons, onboarding, product tours, whatever. Try the share button below.",
+      body: "There's also CardDeck for graded flashcard/quiz decks — try ?cards in the URL. And the share button below round-trips this whole deck through a link.",
       label: "Done →",
     },
   ],
 };
+
+const exampleCards: BarajaCard[] = [
+  { prompt: "CardDeck", widget: { type: "flipCard", front: "ciao", back: "hola\n\n\"Ciao! Come stai?\"" } },
+  {
+    widget: {
+      type: "singleChoiceQuiz",
+      question: '¿Cómo se dice "gracias" en italiano?',
+      options: ["Ciao", "Grazie", "Acqua", "Prego"],
+      correctIndex: 1,
+      explanation: '"Grazie" significa gracias.',
+    },
+  },
+  { widget: { type: "trueFalse", statement: '"Acqua" significa agua.', isTrue: true } },
+];
+
+const params = new URLSearchParams(window.location.search);
+const useCardDeck = params.has("cards");
 
 // If the page was opened with a shared deck link (?deck=...), render that instead of the built-in example.
 let deck: DeckManifest;
@@ -74,14 +97,10 @@ try {
   deck = exampleDeck;
 }
 
-function ShareBar({ deck }: { deck: DeckManifest }) {
+function ShareBar({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <button
-      onClick={() => {
-        const url = buildShareURL(window.location.origin + window.location.pathname, deck);
-        navigator.clipboard?.writeText(url).catch(() => {});
-        window.prompt("Share this deck with a link:", url);
-      }}
+      onClick={onClick}
       style={{
         position: "fixed",
         bottom: 12,
@@ -99,14 +118,48 @@ function ShareBar({ deck }: { deck: DeckManifest }) {
         boxShadow: "0 2px 8px rgba(0,0,0,.3)",
       }}
     >
-      🔗 Share this deck
+      {label}
     </button>
+  );
+}
+
+function App() {
+  if (useCardDeck) {
+    return (
+      <>
+        <CardDeck
+          cards={exampleCards}
+          title="CardDeck demo"
+          icon="🃏"
+          accentColor="#2d6a4f"
+          onExit={() => alert("onExit fired")}
+          onFinish={(result) => alert(`onFinish: ${result.correct}/${result.graded} correctas`)}
+        />
+        <ShareBar
+          label="⬇️ Download deck (ShareableDeck)"
+          onClick={() => downloadShareableDeck({ name: "carddeck-demo", cards: exampleCards })}
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <StoryDeck deck={deck} onExit={() => alert("onExit fired")} onComplete={() => alert("onComplete fired 🎉")} />
+      <ShareBar
+        label="🔗 Share this deck"
+        onClick={() => {
+          const url = buildShareURL(window.location.origin + window.location.pathname, deck);
+          navigator.clipboard?.writeText(url).catch(() => {});
+          window.prompt("Share this deck with a link:", url);
+        }}
+      />
+    </>
   );
 }
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <StoryDeck deck={deck} onExit={() => alert("onExit fired")} onComplete={() => alert("onComplete fired 🎉")} />
-    <ShareBar deck={deck} />
+    <App />
   </StrictMode>
 );
