@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "story-slides-protocol": "*",
+    "story-slides-ui": "*"
   },
   "devDependencies": {
     "@types/react": "^18.3.0",

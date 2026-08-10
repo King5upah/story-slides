@@ -1,0 +1,16 @@
+{
+  "name": "story-slides-protocol",
+  "version": "0.1.0",
+  "description": "Portable, versioned format for story-slides decks — serialize, validate, and share via URL. No React, no backend required.",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["story-slides", "protocol", "deck", "serialization", "share"]
+}

@@ -8,11 +8,13 @@ export type StorySlide =
   | { type: "quiz"; question: string; options: string[]; correct: number; explanation: string }
   | { type: "cta"; heading: string; body: string; label: string };
 
-export interface StoryDeckProps {
-  slides: StorySlide[];
-  accentColor?: string;
+export const DECK_MANIFEST_VERSION = 1 as const;
+
+export interface DeckManifest {
+  version: typeof DECK_MANIFEST_VERSION;
+  id: string;
   title?: string;
   icon?: string;
-  onExit?: () => void;
-  onComplete?: () => void;
+  accentColor?: string;
+  slides: StorySlide[];
 }

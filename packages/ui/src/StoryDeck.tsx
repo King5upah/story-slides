@@ -188,7 +188,13 @@ function SlideView({
   }
 }
 
-export function StoryDeck({ slides, accentColor = "#7d2033", title, icon, onExit, onComplete }: StoryDeckProps) {
+export function StoryDeck(props: StoryDeckProps) {
+  const slides = props.deck?.slides ?? props.slides ?? [];
+  const accentColor = props.deck?.accentColor ?? props.accentColor ?? "#7d2033";
+  const title = props.deck?.title ?? props.title;
+  const icon = props.deck?.icon ?? props.icon;
+  const { onExit, onComplete } = props;
+
   const [index, setIndex] = useState(0);
   const [quizLocked, setQuizLocked] = useState(slides[0]?.type === "quiz");
 
